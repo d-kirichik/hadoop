@@ -1,0 +1,6 @@
+Main.class
+SimplePartitioner.class
+SimpleReducer.class
+SimpleMapper.class
+CSVInput.class
+SimpleComparator.class
