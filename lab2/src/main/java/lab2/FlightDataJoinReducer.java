@@ -15,9 +15,11 @@ public class FlightDataJoinReducer extends Reducer<FlightAirportJoinerKey, Text,
         Double min = Double.MAX_VALUE, max = 0.0, sum = 0.0, curValue;
         String value = "";
         for (Text v : vals) {
-            String[] tmp = v.toString().split(" ");
-            if(tmp[1].equals("1")) {
-                curValue = Double.parseDouble(tmp[0]);
+            if(count == 0){
+                value = v.toString();
+            }
+            else{
+                curValue = Double.parseDouble(v.toString());
                 if (curValue < min) {
                     min = curValue;
                 }
@@ -25,9 +27,6 @@ public class FlightDataJoinReducer extends Reducer<FlightAirportJoinerKey, Text,
                     max = curValue;
                 }
                 sum += curValue;
-            }
-            else{
-                value = tmp[0];
             }
             count++;
         }

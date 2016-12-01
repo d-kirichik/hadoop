@@ -30,13 +30,15 @@ public class FlightDataInput implements Writable {
         String[] tmp = str.split(",");
         if(!tmp[tmp.length - 5].equals("\"ARR_DELAY_NEW\"") && !tmp[tmp.length - 5].isEmpty()) {
             this.arrDelayNew = Double.parseDouble(tmp[tmp.length - 5]);
+        }
+        if(!tmp[tmp.length - 9].equals("\"DEST_AIRPORT_ID\"")){
             this.airportID = Integer.parseInt(tmp[tmp.length - 9]);
         }
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        dataOutput.writeBytes(this.toString());
+        dataOutput.writeBytes(this.arrDelayNew.toString());
     }
 
     @Override

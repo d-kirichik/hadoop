@@ -1,6 +1,6 @@
 package lab2;
 
-
+import org.apache.commons.lang.NullArgumentException;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -18,6 +18,9 @@ public class FlightAirportJoinerKey implements WritableComparable{
     public FlightAirportJoinerKey(){}
 
     public FlightAirportJoinerKey(Integer airportID, Boolean isFlight){
+        if(isFlight == null){
+            throw new NullArgumentException("isFlight is null!");
+        }
         this.airportID = airportID;
         this.isFlight = isFlight;
     }
@@ -37,11 +40,19 @@ public class FlightAirportJoinerKey implements WritableComparable{
             return -1;
         }
         FlightAirportJoinerKey second = (FlightAirportJoinerKey) o;
-        if(this.airportID == null)
+        if(this.airportID == null || this.isFlight == null)
             return 1;
         else if(second.airportID == null)
-            return 0;
-        else return this.airportID - second.airportID;
+            return -1;
+        else if(this.airportID > second.airportID)
+            return 1;
+        else if(this.airportID < second.airportID)
+            return -1;
+        else if(!this.isFlight && second.isFlight)
+            return -1;
+        else if(!second.isFlight && this.isFlight)
+            return 1;
+        else return 0;
     }
 
     @Override
@@ -52,8 +63,6 @@ public class FlightAirportJoinerKey implements WritableComparable{
     @Override
     public void readFields(DataInput dataInput) throws IOException {
         String tmp[] = dataInput.readLine().split(",");
-        if(tmp[0].equals("null"))
-            return;
         airportID = Integer.parseInt(tmp[0]);
         isFlight = Boolean.parseBoolean(tmp[1]);
     }
@@ -64,8 +73,9 @@ public class FlightAirportJoinerKey implements WritableComparable{
         if (!(o instanceof FlightAirportJoinerKey)) return false;
 
         FlightAirportJoinerKey second = (FlightAirportJoinerKey) o;
-
-        return (Integer.compare(second.airportID, airportID) != 0) &&  (isFlight == second.isFlight);
+        if(second.airportID !=null && this.airportID != null)
+            return (Integer.compare(second.airportID, airportID) != 0) &&  (isFlight.equals(second.isFlight));
+        else return false;
     }
 
     @Override

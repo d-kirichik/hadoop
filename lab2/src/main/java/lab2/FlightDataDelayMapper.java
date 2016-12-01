@@ -16,7 +16,7 @@ public class FlightDataDelayMapper extends Mapper<LongWritable, Text, FlightAirp
         if (in.getArrDelayNew() == null)
                 return;
         FlightAirportJoinerKey flightKey = new FlightAirportJoinerKey(in.getAirportID(), true);
-        Text flightValue = new Text(in.getArrDelayNew().toString() + " 1");
+        Text flightValue = new Text(in.getArrDelayNew().toString());
         if (!in.getArrDelayNew().equals(0.0)) {
             context.write(flightKey, flightValue);
         }

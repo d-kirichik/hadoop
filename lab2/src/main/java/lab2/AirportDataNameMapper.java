@@ -14,7 +14,9 @@ public class AirportDataNameMapper extends Mapper<LongWritable, Text, FlightAirp
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         AirportDataInput in = new AirportDataInput(value.toString());
         FlightAirportJoinerKey airportKey = new FlightAirportJoinerKey(in.getCode(), false);
-        Text airportValue = new Text(in.getName()+ " 0");
-        context.write(airportKey, airportValue);
+        if(in.getName() != null) {
+            Text airportValue = new Text(in.getName());
+            context.write(airportKey, airportValue);
+        }
     }
 }
