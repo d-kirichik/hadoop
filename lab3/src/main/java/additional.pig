@@ -5,14 +5,18 @@ FlightData = load 'sample.csv' USING org.apache.pig.piggybank.storage.CSVExcelSt
 	origin_city_market_id:int,dest_airport_id:int,wheels_on:chararray,arr_time:chararray,
 	arr_delay:float,arr_delay_new:float,cancelled:float,cancellation_code:chararray,air_time:float,distance:float);
 
-cancelledFlight = FILTER FlightData BY cancelled == 1.0 AND origin_airport_id < dest_airport_id;
+cancelledFlightThere = FILTER FlightData BY cancelled == 1.0 AND origin_airport_id < dest_airport_id;
 
-airportPair = FOREACH cancelledFlight GENERATE origin_airport_id, dest_airport_id;
+airportPairThere = FOREACH cancelledFlightThere GENERATE (origin_airport_id, dest_airport_id) AS key;
 
-grouppedAirportPair = GROUP airportPair BY (origin_airport_id, dest_airport_id);	
+cancelledFlightBack = FILTER FlightData BY cancelled == 1.0 AND dest_airport_id < origin_airport_id;
 
-counted = FOREACH grouppedAirportPair GENERATE group AS airport_pair, COUNT(airportPair) AS num_cancelled;
+airportPairBack = FOREACH cancelledFlightBack GENERATE (dest_airport_id, origin_airport_id) AS key;
 
-counted_ordered = ORDER counted BY num_cancelled;
+totalGroupped = COGROUP airportPairThere BY key, airportPairBack BY key;
 
-STORE counted_ordered INTO 'additional_pig' USING PigStorage(',');
+counted = FOREACH totalGroupped GENERATE group AS airport_pair, (COUNT(airportPairThere) + COUNT(airportPairBack)) AS numCancelled;
+
+countedOrdered = ORDER counted BY numCancelled;
+
+STORE countedOrdered INTO 'additional_pig' USING PigStorage(',');
