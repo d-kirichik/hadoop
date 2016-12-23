@@ -24,7 +24,7 @@ public class Main {
     private static final byte[] START_ROW = Bytes.toBytes("2015-01-01");
     private static final byte[] STOP_ROW = Bytes.toBytes("2015-01-30");
 
-    private static final float DELAY_TIME = 1f;
+    private static final float DELAY_TIME = 10.0f;
 
     public static void main(String[] args){
         Configuration config = HBaseConfiguration.create();

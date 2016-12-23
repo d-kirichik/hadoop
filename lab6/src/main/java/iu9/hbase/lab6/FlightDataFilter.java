@@ -30,21 +30,20 @@ public class FlightDataFilter extends FilterBase {
     }
 
     @Override
-    public void reset() throws IOException {}
+    public void reset() throws IOException {
+        this.remove = true;
+    }
+
 
     @Override
     public ReturnCode filterKeyValue(Cell cell) throws IOException {
         String columnName = Bytes.toString(CellUtil.cloneQualifier(cell));
-        String value = Bytes.toString(CellUtil.cloneValue(cell));
-        if (columnName.equals("ARR_DELAY_NEW")) {
-            if (!value.isEmpty() && Float.parseFloat(value) > this.arrDelayNew)
+        String columnValue = Bytes.toString(CellUtil.cloneValue(cell));
+        if (columnName.equals("ARR_DELAY_NEW") && !columnValue.isEmpty() && Float.parseFloat(columnValue) > this.arrDelayNew){
                 this.remove = false;
         }
-        else {
-            if (columnName.equals("CANCELLED")) {
-                if (Float.parseFloat(value) == 1.0f)
-                    this.remove = false;
-            }
+        else if (columnName.equals("CANCELLED") && Float.parseFloat(columnValue) == 1.0f){
+                this.remove = false;
         }
         return ReturnCode.INCLUDE;
     }
